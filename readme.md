@@ -21,7 +21,10 @@ Root
  |    same.
 +++  .Xsession
  |   set backlighty funness and xfluxy stuff
-+++   
++++  .Xmodmap
+ |   make things more OSX-y
++++  post-receive
+ |   github hook for new repositories on the server
 ```
 
 
