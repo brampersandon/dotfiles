@@ -9,7 +9,7 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-set $mod Mod4
+set $mod Control
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -64,27 +64,29 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym Mod4+h split h
+## OVERRIDDEN FROM $mod4+h for mac-like stuff
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym Mod4+v split v
+## OVERRIDDEN as above
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym Mod4+s layout stacking
+bindsym Mod4+w layout tabbed
+bindsym Mod4+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+#bindsym $mod+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+#bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -150,7 +152,7 @@ bindsym $mod+r mode "resize"
 bindsym F6 exec xbacklight -dec 5
 bindsym F7 exec xbacklight -inc 5
 bindsym $mod+Shift+Return exec vivaldi
-
+bindsym Control+space exec dmenu_run
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {

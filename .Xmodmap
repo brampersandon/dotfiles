@@ -1,0 +1,5 @@
+pointer = 1 2 3 5 4 7 6 8 9 10 11 12
+clear control
+clear mod4
+add control = Super_L
+add mod4 = Control_L
