@@ -13,25 +13,25 @@ Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'fatih/vim-go', { 'for': 'go' }
 Plug 'godlygeek/tabular'
 Plug 'guns/vim-sexp'
+Plug 'itchyny/lightline.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
-Plug 'lambdatoast/elm.vim'
+Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-grepper', { 'on': 'Grepper' }
-Plug 'mhinz/vim-rfc'
 Plug 'mhinz/vim-startify'
 Plug 'moll/vim-bbye', { 'on': 'Bdelete' }
 Plug 'moll/vim-node', { 'for': 'javascript' }
 Plug 'mustache/vim-mode'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'olical/vim-enmasse', { 'on': 'EnMasse' }
+Plug 'Olical/vim-enmasse', { 'on': 'EnMasse' }
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'paradigm/TextObjectify'
+Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'samuelsimoes/vim-jsx-utils', { 'for' : 'javascript.jsx' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-" Plug 'scrooloose/syntastic', { 'on': ['SyntasticCheck', 'SyntasticToggleMode'] }
 Plug 'sk1418/last256'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
@@ -46,83 +46,34 @@ Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/EasyGrep'
-Plug 'vim-scripts/rfc-syntax', { 'for': 'rfc' }
 
 call plug#end()
 
 
 "=========================================================="
-" Statusline
-"=========================================================="
-
-" Clear the statusline.
-set statusline=
-
-" Buffer number.
-set statusline+=[%n]\ ""
-
-" User2 hilight.
-set statusline+=%2*
-
-" Flags (h, [+], RO).
-set statusline+=%(\ %m%h%r\ %)
-
-" User1 highlight.
-set statusline+=%1*
-
-" File name.
-set statusline+=\ %f\ ""
-
-" Back to default highlight.
-set statusline+=%*\ ""
-
-" Filetype.
-set statusline+=%<[%{strlen(&ft)?&ft:'none'},
-
-" Encoding.
-set statusline+=%{strlen(&fenc)?&fenc:&enc},
-
-" File format.
-set statusline+=%{&fileformat}]
-
-" Right align the rest.
-set statusline+=%=
-
-" Cursor line, column.
-set statusline+=%-14.(%l,%c%V%)
-
-" Percent through file.
-set statusline+=\ %P\ ""
-
-
-"=========================================================="
 " Colorscheme/highlights
 "=========================================================="
-
+"
+"
 set background=dark
 colorscheme last256
 
 "" Startify
 "
 hi! StartifyBracket ctermfg=8
-hi! StartifyFile    ctermfg=3
+hi! StartifyFile    ctermfg=15
 hi! StartifyNumber  ctermfg=15
 hi! StartifyPath    ctermfg=8
 hi! StartifySlash   ctermfg=7
 hi! StartifySpecial ctermfg=8
-hi! StartifyHeader  ctermfg=3
+hi! StartifyHeader  ctermfg=124
 
 "" Search
 hi! Search ctermfg=0 ctermbg=4
 
-"" Statusline
-hi! User1 ctermbg=10 ctermfg=15
-hi! User2 ctermbg=0 ctermfg=1
-
 "" TODO
 hi! Todo ctermbg=none ctermfg=11
 
-" hi! Comment cterm=italic
 hi! Subdued ctermfg=240
 
 "" NERDTree
@@ -135,6 +86,14 @@ hi ColorColumn ctermbg=0
 hi CursorLine cterm=none ctermbg=0
 hi VertSplit cterm=none ctermbg=8 ctermfg=8
 
+
+hi WhiteOnBlue ctermfg=254 ctermbg=25 cterm=none
+hi PurpleOnBlack ctermfg=235 ctermbg=141 cterm=none
+
+hi! link Visual WhiteOnBlue
+
+hi! link Search PurpleOnBlack
+hi! link IncSearch Search
 
 "=========================================================="
 " Misc. Settings
@@ -149,13 +108,6 @@ let g:maplocalleader = " "
 " http://www.shallowsky.com/linux/noaltscreen.html
 " via Gary Bernhardt
 set t_ti= t_te=
-
-" Set fold method to indent.
-set foldmethod=indent
-
-" Don't fold by default.
-set nofoldenable
-set foldtext=NeatFoldText()
 
 if has('gui_running')
   " Set font in GUI.
@@ -181,6 +133,8 @@ set iskeyword+=-
 set conceallevel=2
 set concealcursor=nc
 
+set noshowmode
+
 
 "=========================================================="
 " Autocommands
@@ -189,7 +143,7 @@ set concealcursor=nc
 augroup FileTypes
   autocmd!
 
-  " This makes editing crontab possible.
+" This makes editing crontab possible.
   " autocmd BufNewFile,BufRead crontab.* set nobackup | set nowritebackup
 
   autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
@@ -234,19 +188,6 @@ augroup END
 " Functions
 "=========================================================="
 
-" From http://dhruvasagar.com/2013/03/28/vim-better-foldtext.
-function! NeatFoldText()
-  let regex = '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*'
-  let line = ' ' . substitute(getline(v:foldstart), regex, '', 'g') . ' '
-  let lines_count = v:foldend - v:foldstart + 1
-  let lines_count_text = '| ' . printf("%10s", lines_count . ' lines') . ' |'
-  let fill = matchstr(&fillchars, 'fold:\zs.')
-  let foldtextstart = strpart('+' . repeat(fill, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
-  let foldtextend = lines_count_text . repeat(fill, 8)
-  let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
-  return foldtextstart . repeat(fill, winwidth(0)-foldtextlength) . foldtextend
-endfunction
-
 function! Standard()
   set makeprg=./node_modules/.bin/standard
   autocmd! BufWritePost * Neomake!
@@ -276,9 +217,6 @@ command! -register CopyMatches call CopyMatches(<q-reg>)
 " Mappings
 "=========================================================="
 
-" New tab.
-map <leader>tn :tabnew<cr>
-
 " Tab navigation.
 nnoremap <silent> <c-n> :tabnext<cr>
 nnoremap <silent> <c-p> :tabprev<cr>
@@ -303,8 +241,9 @@ nnoremap <silent> <f7> :prev<cr>
 " Next.
 nnoremap <silent> <f9> :next<cr>
 
-" Ack.vim.
-nnoremap <leader>a :Ack<space>
+" Grepper
+nnoremap <leader>a :Grepper<cr>
+nnoremap <leader>w :Grepper -cword -noprompt<cr>
 
 " Copy and paste from system clipboard.
 noremap <leader>p "+p
@@ -392,33 +331,52 @@ let g:startify_files_number = 10
 let g:startify_change_to_dir = 0
 let g:startify_relative_path = 1
 let g:startify_custom_header = [
-  \ '',
-  \ '    |||||||||||||||||||        |   |        ||||||||||||||||||||',
-  \ '        ||||||||||||||||       |||||       |||||||||||||||||',
-  \ '          |||||||||||||||$|||$|$$$$$|$|||$|||||||||||||||',
-  \ '           ||||||||||||||$|||$|||$|||$$|$$||||||||||||||',
-  \ '            ||||||||||||||$|$||||$|||$|$|$|||||||||||||',
-  \ '           ||||||||||||||||$|||$$$$$|$|||$||||||||||||||',
-  \ '                            |||||||||||',
-  \ '                               |||||',
-  \ '                                |||',
-  \ '                                 |'
+ \ '',
+ \ ' _____',
+ \ '  \ 1 \__      _____',
+ \ '   \ 5 \/_______\___\_____________',
+ \ '   < /0/   .....................  `-.',
+ \ '    `-----------,----,--------------´',
+ \ '               _/____/'
 \]
 " Let NERDTree use the Startify buffer
 autocmd User Startified setlocal buftype=
 
-
-"" Syntastic
-"
-" Enable syntastic error signs in the line number column.
-let g:syntastic_enable_signs = 1
-" Passive by default.
-let g:syntastic_mode_map = { 'mode': 'passive',
-                            \ 'active_filetypes': [],
-                            \ 'passive_filetypes': [] }
 
 "" JSX
 let g:jsx_ext_required = 0
 
 "" Elm-vim
 let g:elm_format_autosave = 1
+let g:elm_setup_keybindings = 0
+
+"" HACK to keep vim-javascript from complaining for now
+if !exists("b:undo_ftplugin") | let b:undo_ftplugin = '' | endif
+
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'readonly', 'relativepath', 'modified' ] ]
+      \ }
+      \ }
+
+
+set shortmess=a
+
+set t_Co=256
+
+set tabstop=2
+set shiftwidth=2
+set autoindent
+set smartindent
+set expandtab
+
+set nu
+
+set nocompatible
+filetype off
+
+let &runtimepath.=',~/.vim/bundle/ale'
+
+filetype plugin on
+
+set statusline +=%{ALEGetStatusLine()}
