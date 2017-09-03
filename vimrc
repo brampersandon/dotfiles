@@ -378,5 +378,5 @@ filetype off
 let &runtimepath.=',~/.vim/bundle/ale'
 
 filetype plugin on
-
+set viminfo='100,n$HOME/.vim/files/info/viminfo
 set statusline +=%{ALEGetStatusLine()}
