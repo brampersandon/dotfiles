@@ -46,6 +46,7 @@ Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/EasyGrep'
+Plug 'w0rp/ale'
 
 call plug#end()
 
@@ -360,6 +361,15 @@ let g:lightline = {
       \ }
 
 
+"" ALE
+let g:ale_fixers = {
+      \'javascript': ['prettier'],
+\}
+
+let g:ale_fix_on_save = 1
+let g:ale_completion_enabled = 1
+"" end ALE
+
 set shortmess=a
 
 set t_Co=256
@@ -374,8 +384,6 @@ set nu
 
 set nocompatible
 filetype off
-
-let &runtimepath.=',~/.vim/bundle/ale'
 
 filetype plugin on
 set viminfo='100,n$HOME/.vim/files/info/viminfo
