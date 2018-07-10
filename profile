@@ -1,9 +1,21 @@
-[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
 
-export PATH=$PATH
+export EDITOR="nvim"
 
+export ANDROID_HOME="/usr/local/share/android-sdk"
+export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 CLICOLOR=1
 alias sp="source ~/.profile"
+alias vim=nvim
+alias a="atom ."
+alias vsc="code ."
+alias md="open -a 'Marked 2.app'"
+alias unfuck-rn="watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -rf node_modules/ && yarn cache clean && yarn && rm -rf ios/build && yarn start --reset-cache"
+alias lasthash="git rev-parse HEAD | cut -c1-7 | tr -d '\n'"
+alias print-scripts="jq .scripts package.json"
 
 # TERMINAL PROMPT CONFIG
 BLUE="$(tput setaf 6)"
@@ -14,10 +26,13 @@ YELLOW="$(tput setaf 3)"
 BOLD="$(tput bold)"
 RESET="$(tput sgr0)"
 
-export PS1='\[$GRAY\]▒\[$RESET\] \[$BOLD\]\[$RED\]\u@\h\[$RESET\] \[$GRAY\]▒\[$RESET\] \[$BOLD\]\[$YELLOW\]\w\[$RESET\] \[$GRAY\]▒\[$RESET\] \[$BLUE\]»\[$RESET\] '
+export PS1='\[$GRAY\]▒\[$RESET\] \[$BOLD\]\[$BLUE\]\u\[$RESET\] \[$GRAY\]▒\[$RESET\] \[$BOLD\]\[$YELLOW\]\w\[$RESET\] \[$GRAY\]▒\[$RESET\] \[$RED\]»\[$RESET\] '
 
 # PATH
 export PATH="/usr/local/bin:$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.fastlane/bin:$PATH"
+eval "$(direnv hook bash)"
+eval "$(thefuck --alias)"
 
 if [[ $- == *i* ]]
 then
@@ -27,4 +42,10 @@ then
     bind '"\e[1;3D": backward-word'
 fi
 
-source /usr/local/share/chruby/chruby.sh
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+  . $(brew --prefix)/etc/bash_completion
+fi
+if [ -f ~/.config/exercism/exercism_completion.bash ]; then
+  . ~/.config/exercism/exercism_completion.bash
+fi
+source /usr/local/opt/chruby/share/chruby/chruby.sh

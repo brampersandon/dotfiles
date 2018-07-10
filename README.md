@@ -9,3 +9,7 @@ In short: random stuff that makes a linux or macOS machine usable for me.
 - `vimrc`: vim and neovim configs. Mostly x-platform, but requires vim-plug
 - `tmux.conf`: lorde help me.
 
+## Brewfile
+Up to date as of 20 Sep 2017
+
+`brew bundle --file=$DOTFILES_ROOT/Brewfile check || brew bundle --file=$DOTFILES_ROOT/Brewfile install`
